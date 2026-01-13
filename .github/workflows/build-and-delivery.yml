@@ -1,15 +1,13 @@
 name: Build and Delivery
 
-# Запуск только на main после успешного тестового workflow
+# Запуск workflow сразу на пуш в main
 on:
-  workflow_run:
-    workflows: ["Test Python App"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
   cd:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
