@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Полное клонирование репозитория
+      # 1️⃣ Клонируем репозиторий
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -27,9 +27,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .                # <- текущий репозиторий
-          file: ./Dockerfile        # <- Dockerfile в корне
+          context: .                # <- локальная директория, где есть Dockerfile и requirements.txt
+          file: ./Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/my-app:latest
           no-cache: true
+          platforms: linux/amd64
 
