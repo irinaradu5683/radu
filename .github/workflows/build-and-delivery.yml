@@ -1,6 +1,5 @@
 name: Build and Delivery
 
-# Запуск workflow только на пуш в main
 on:
   push:
     branches:
@@ -11,26 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Клонируем репозиторий полностью
+      # 1️⃣ Полное клонирование репозитория
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # <- важно, чтобы Docker видел все файлы и коммиты
+          fetch-depth: 0
 
-      # 2️⃣ Логин в Docker Hub
+      # 2️⃣ Явное копирование репозитория в рабочую папку для Docker
+      - name: Prepare workspace for Docker
+        run: cp -r $GITHUB_WORKSPACE ./repo
+
+      # 3️⃣ Логин в Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 3️⃣ Сборка и публикация Docker образа
+      # 4️⃣ Сборка и публикация Docker образа
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .                 # <- локальная копия репозитория
-          file: ./Dockerfile         # <- Dockerfile в корне
+          context: ./repo                # <- локальный контекст с репозиторием
+          file: ./repo/Dockerfile       # <- Dockerfile в корне репозитория
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/my-app:latest
-          no-cache: true             # <- отключаем кэш, чтобы точно увидеть requirements.txt
+          no-cache: true
 
