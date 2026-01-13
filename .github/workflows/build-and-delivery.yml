@@ -26,8 +26,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .               # <- локальный контекст, корень репозитория
-          file: Dockerfile         # <- Dockerfile в корне
+          context: .               # <- локальный контекст (checkout)
+          file: ./Dockerfile       # <- Dockerfile в корне проекта
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/my-app:latest
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
 
