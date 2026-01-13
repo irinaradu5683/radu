@@ -22,14 +22,13 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 3️⃣ Сборка и публикация образа
+      # 3️⃣ Сборка и публикация Docker образа
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .               # <- локальный контекст (checkout)
-          file: ./Dockerfile       # <- Dockerfile в корне проекта
+          context: .                 # <- Локальный контекст, который клонировал checkout
+          file: ./Dockerfile         # <- Dockerfile в корне
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/my-app:latest
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
+          no-cache: true             # <- отключаем кэш, чтобы Docker точно видел requirements.txt
 
