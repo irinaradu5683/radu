@@ -1,9 +1,19 @@
-FROM python:3.11
+# Базовый образ Python
+FROM python:3.12-slim
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
+# Рабочая директория внутри контейнера
 WORKDIR /app
-COPY src ./src
 
-ENTRYPOINT [ "python", "-m", "src.main" ]
+# Копируем файл с зависимостями и устанавливаем их
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Копируем весь код приложения
+COPY ./src ./src
+
+# Экспонируем порт для FastAPI
+EXPOSE 8000
+
+# Команда запуска приложения
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
