@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Клонируем репозиторий
+      # 1️⃣ Клонируем репозиторий полностью
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # <- важно, чтобы Docker видел все файлы и коммиты
 
       # 2️⃣ Логин в Docker Hub
       - name: Login to Docker Hub
@@ -26,9 +28,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .                 # <- Локальный контекст, который клонировал checkout
+          context: .                 # <- локальная копия репозитория
           file: ./Dockerfile         # <- Dockerfile в корне
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/my-app:latest
-          no-cache: true             # <- отключаем кэш, чтобы Docker точно видел requirements.txt
+          no-cache: true             # <- отключаем кэш, чтобы точно увидеть requirements.txt
 
